@@ -1,0 +1,21 @@
+/* src/styles.css */
+.link {
+  fill: none;
+  stroke: #555;
+  stroke-opacity: 0.4;
+  stroke-width: 2;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 3;
+}
+
+.node text {
+  font: 12px sans-serif;
+}
+
+.node--internal circle {
+  fill: #555;
+}
