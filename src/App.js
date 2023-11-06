@@ -67,7 +67,8 @@ function AlphaBetaVisualization() {
         <div className="App">
             <TreeDiagram treeData={tree} currentStep={currentStep} />
             <button onClick={handleNextStep}>Next Step</button>
-            <button onClick={handleReset}>Reset</button>
+            {/* Leave Reset option off until fixed */}
+            {/* <button onClick={handleReset}>Reset</button> */}
         </div>
     );
 }
