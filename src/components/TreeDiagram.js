@@ -2,7 +2,7 @@ import './styles.css'
 import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 
-const TreeDiagram = ({ treeData, currentStep }) => {
+const TreeDiagram = ({ treeData, currentStep, alphaBetaValues }) => {
     const svgRef = useRef();
 
     // State to keep track of window dimensions
@@ -42,14 +42,6 @@ const TreeDiagram = ({ treeData, currentStep }) => {
         // const link = g.selectAll('.link')
         // Render the links (edges) of the tree
         const link = g.selectAll('.link')
-            // .data(root.links())
-            // .enter()
-            // .append('path')
-            // .attr('d', d3.linkVertical()
-            //     .x(d => d.x)
-            //     .y(d => d.y))
-            // .attr('fill', 'none')
-            // .attr('stroke', 'black');
             .data(root.descendants().slice(1))
             .enter().append('path')
             .attr('class', 'link')
@@ -64,13 +56,6 @@ const TreeDiagram = ({ treeData, currentStep }) => {
 
 
         node.append('path')
-            // .attr('d', d => {
-            //     if (d.depth === 0) {
-            //         // Increase size of triangles by scaling the coordinates
-            //         return "M0,-15L15,15L-15,15L0,-15"; 
-            //     }
-            //     return d.depth % 2 === 0 ? "M0,15L15,-15L-15,-15L0,15" : "M0,-15L15,15L-15,15L0,-15";
-            // })
             .attr('d', d3.symbol().type(d3.symbolTriangle).size(500))
             .attr('stroke', 'black')
             // .attr('transform', d => `translate(${d.x},${d.y})`)
@@ -114,37 +99,29 @@ const TreeDiagram = ({ treeData, currentStep }) => {
             // .attr('fill', d => (currentStep && currentStep.action === 'prune' && (d === currentStep.node || d.descendants().includes(currentStep.node))) ? 'gray' : 'black');
 
         // Add labels to the nodes (if they have values)
-        // svg.selectAll('text')
-        //     .data(root.descendants())
-        //     .enter()
-        //     .append('text')
-        //     .attr('x', d => d.x)
-        //     .attr('y', d => d.y + 5)  // Adjusted for better positioning
-        //     .attr('dy', '0.35em')
-        //     .attr('text-anchor', 'middle')
-        //     .text(d => d.data.value || '');  // Show value if it exists
         node.append('text')
           .attr('dy', 3)
           .attr('y', d => d.children ? -30 : 30)
           .style('text-anchor', 'middle')
           .text(d => d.data.value);
 
-    }, [treeData, currentStep]);  // Re-render when treeData or currentStep changes or dimensions change
 
-    // // Update dimensions state on window resize
-    // useEffect(() => {
-    //     const handleResize = () => {
-    //         setDimensions({
-    //             width: window.innerWidth,
-    //             height: window.innerHeight
-    //         });
-    //     };
+        const alphaBetaDisplay = svg.append('g')
+            .attr('class', 'alpha-beta-display')
+            .attr('transform', `translate(${window.innerWidth - 220}, 30)`);
 
-    //     window.addEventListener('resize', handleResize);
-    //     return () => window.removeEventListener('resize', handleResize);
-    // }, []);
+        alphaBetaDisplay.append('text')
+            .text(`Alpha: ${alphaBetaValues.alpha}`)
+            .attr('class', 'alpha-beta-text')
+            .attr('y', 0);
 
-    // return <svg ref={svgRef} width={dimensions.width} height={dimensions.height}></svg>;
+        alphaBetaDisplay.append('text')
+            .text(`Beta: ${alphaBetaValues.beta}`)
+            .attr('class', 'alpha-beta-text')
+            .attr('y', 20);
+
+    }, [treeData, currentStep, alphaBetaValues]);  // Re-render when treeData or currentStep changes or dimensions change
+
     return (
         <svg ref={svgRef}></svg>
     );

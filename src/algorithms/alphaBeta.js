@@ -7,7 +7,8 @@ import { max } from 'd3';  // Though not used, keeping it as it might be needed 
 function* alphaBetaGenerator(node, alpha, beta, isMaxPlayer) {
     // Base case: Node doesn't have children, is leaf node
     if (!node.children || node.children.length === 0) {
-        yield { action: 'returning value', node: node, value: node.value };  // Yield the value of the leaf node
+        yield { action: 'returning value', node: node, value: node.value, alpha: alpha, beta: beta };
+        // yield { action: 'returning value', node: node, value: node.value };  // Yield the value of the leaf node
         return node.value;
     }
     // if max turn
@@ -19,13 +20,13 @@ function* alphaBetaGenerator(node, alpha, beta, isMaxPlayer) {
             let val = yield* alphaBetaGenerator(child, alpha, beta, false);
             max_val = Math.max(max_val, val);
             alpha = Math.max(alpha, val);
-            yield { action: 'update', alpha: alpha, node: node, value: max_val };  // Yield update action
+            yield { action: 'update', alpha: alpha, beta: beta, node: node, value: max_val };  // Yield update action
             // Alpha-beta pruning condition for maximizing player
             if (beta <= alpha) {
                 for (let subsequentChild of node.children.slice(node.children.indexOf(child) + 1)) {
                     subsequentChild.isPruned = true;
                 }
-                yield { action: 'prune', node: child };
+                yield { action: 'prune', node: child, alpha: alpha, beta: beta };
                 break;
             }
         }
@@ -41,12 +42,14 @@ function* alphaBetaGenerator(node, alpha, beta, isMaxPlayer) {
             let val = yield* alphaBetaGenerator(child, alpha, beta, true);
             min_val = Math.min(min_val, val);
             beta = Math.min(beta, val);
-            yield { action: 'update', node: node, value: min_val };  // Yield update action
+            yield { action: 'update', alpha: alpha, beta: beta, node: node, value: min_val };
+            // yield { action: 'update', node: node, value: min_val };  // Yield update action
             if (beta <= alpha) {
                 for (let subsequentChild of node.children.slice(node.children.indexOf(child) + 1)) {
                     subsequentChild.isPruned = true;
                 }
-                yield { action: 'prune', node: child };
+                yield { action: 'prune', node: child, alpha: alpha, beta: beta };
+                // yield { action: 'prune', node: child };
                 break;
             }
         }

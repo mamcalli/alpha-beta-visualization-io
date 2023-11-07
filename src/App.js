@@ -13,6 +13,8 @@ function AlphaBetaVisualization() {
 
     const [initialTree, setInitialTree] = useState(JSON.parse(JSON.stringify(tree)));
 
+    const [alphaBetaValues, setAlphaBetaValues] = useState({ alpha: -Infinity, beta: Infinity });
+
     // useEffect(() => {
     //     setInitialTree(JSON.parse(JSON.stringify(tree)));
     // }, []); // ADDED
@@ -30,6 +32,10 @@ function AlphaBetaVisualization() {
         console.log("Received step from generator:", step);
         if (!step.done) {
             setCurrentStep(step.value);
+            // Update alpha and beta values if they're present in the step (added)
+            if (step.value.alpha !== undefined && step.value.beta !== undefined) {
+                setAlphaBetaValues({ alpha: step.value.alpha, beta: step.value.beta });
+            }
         }
 
         if (step.value.action === 'updateValue') {
@@ -65,7 +71,8 @@ function AlphaBetaVisualization() {
     
     return (
         <div className="App">
-            <TreeDiagram treeData={tree} currentStep={currentStep} />
+            {/* add alphaBetaValues here */}
+            <TreeDiagram treeData={tree} currentStep={currentStep} alphaBetaValues={alphaBetaValues} />
             <button onClick={handleNextStep}>Next Step</button>
             {/* Leave Reset option off until fixed */}
             {/* <button onClick={handleReset}>Reset</button> */}
